@@ -25,7 +25,15 @@ class ChatAdapter(private val context: Context, private val chatList: ArrayList<
         val chat_Time = itemView?.from_time_TextView
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder{
+    fun addChat(chat: Message){
+        if (chatList != null){
+            chatList.add(chat)
+        }
+    }
+
+    // getItemViewType의 return값 Int가 viewType으로 넘어옴
+    // viewType으로 넘어오는 값에 따라 viewHolder를 알맞게 처리리
+   override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder{
         val v: View
         return when (viewType) {
             Message.RIGHT_TYPE -> {
