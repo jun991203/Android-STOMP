@@ -34,13 +34,8 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+    /*보내는 메세지 추가하는 메소드*/
     fun sendMessage(){
-//        val currentTime = System.currentTimeMillis()
-//        val date = Date(currentTime)
-//        val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale("ko", "KR"))
-//        val stringTime = dateFormat.format(date)
-//        val longTime = dateFormat.parse(stringTime).time
-
         val currentDateTime = Calendar.getInstance().time
         val dateFormat = SimpleDateFormat("yyyy.MM.dd HH:mm:ss", Locale.KOREA).format(currentDateTime)
         val timeString = dateFormat.toString()
@@ -49,14 +44,26 @@ class MainActivity : AppCompatActivity() {
         val message: String? = send_EditText.text.toString()
         // 작성된 메세지가 있는 경우에만 작동
         if (message != null){
-            val chat = Message( Message.RIGHT_TYPE, message, time)
+            val chat = Message(Message.RIGHT_TYPE, message, time)
             cAdapter.addChat(chat)
             cAdapter.notifyDataSetChanged()
-
             // 채팅창 초기화
             send_EditText.setText("")
         }
+    }
 
+    /*받은 메세지 추가하는 메소드*/
+    fun receiveMessage(){
+        val currentDateTime = Calendar.getInstance().time
+        val dateFormat = SimpleDateFormat("yyyy.MM.dd HH:mm:ss", Locale.KOREA).format(currentDateTime)
+        val timeString = dateFormat.toString()
+        val time = timeString.slice(IntRange(11, 15))
 
+        val message: String = ""    // 웹소켓으로 받은 메세지 넣기
+        if (message != null){
+            val chat = Message (Message.LEFT_TYPE, message, time)
+            cAdapter.addChat(chat)
+            cAdapter.notifyDataSetChanged()
+        }
     }
 }
