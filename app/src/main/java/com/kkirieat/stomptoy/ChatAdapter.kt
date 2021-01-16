@@ -8,8 +8,9 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.row_chat_from.view.*
 import kotlinx.android.synthetic.main.row_chat_to.view.*
+import java.lang.RuntimeException
 
-class ChatAdapter(private val context: Context, private val msgList: ArrayList<Message>) : RecyclerView.Adapter<RecyclerView.ViewHolder>(){
+class ChatAdapter(private val context: Context, private val chatList: ArrayList<Message>) : RecyclerView.Adapter<RecyclerView.ViewHolder>(){
 
 
     // 보내는 메세지 클래스
@@ -26,32 +27,40 @@ class ChatAdapter(private val context: Context, private val msgList: ArrayList<M
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder{
         val v: View
-
-        if(viewType == 1) {
-            // 상대방에게 메세지를 보내는 경우
-            v = LayoutInflater.from(context).inflate(R.layout.row_chat_to, parent, false)
-            return SendHolder(v)
-        }
-        else{
-            // 상대방에게 메세지를 받는 경우
-            v = LayoutInflater.from(context).inflate(R.layout.row_chat_from, parent, false)
-            return ReceiveHolder(v)
+        return when (viewType) {
+            Message.RIGHT_TYPE -> {
+                v = LayoutInflater.from(context).inflate(R.layout.row_chat_to, parent, false)
+                SendHolder(v)
+            }
+            Message.LEFT_TYPE -> {
+                v = LayoutInflater.from(context).inflate(R.layout.row_chat_from, parent, false)
+                ReceiveHolder(v)
+            }
+            else -> throw RuntimeException("Unknown viewType ERROR")
         }
 
     }
 
     override fun getItemCount(): Int {
-        return msgList.size
+        return chatList.size
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        if(holder is SendHolder){
-            holder.chat_Text?.text = msgList[position].message
-            holder.chat_Time?.text = msgList[position].time
-        }else if(holder is ReceiveHolder){
-            holder.chat_Text?.text = msgList[position].message
-            holder.chat_Time?.text = msgList[position].time
+        val chat = chatList[position]
+        when (chat.type) {
+            Message.RIGHT_TYPE -> {
+                (holder as SendHolder).chat_Text?.text = chat.message
+                holder.chat_Time?.text = chat.time
+            }
+            Message.LEFT_TYPE -> {
+                (holder as ReceiveHolder).chat_Text?.text = chat.message
+                holder.chat_Time?.text = chat.time
+            }
         }
+    }
+
+    override fun getItemViewType(position: Int): Int {
+        return chatList[position].type
     }
 
 
